@@ -8,6 +8,8 @@ export type ComposeErrorKind =
   | "overloaded" // 混雑・サーバー側の不調
   | "bad-request" // リクエストの誤り（モデルIDの誤りなど）
   | "bad-response" // 応答から日記を取り出せない
+  | "truncated" // 長すぎて途中で切れた
+  | "refused" // モデルが応答を断った
   | "unknown";
 
 export class ComposeError extends Error {
@@ -43,7 +45,17 @@ export function composeErrorMessage(error: ComposeError): string {
       return "リクエストが受け付けられませんでした。設定のモデルIDを確認してください。";
     case "bad-response":
       return "日記をうまく作れませんでした。あとでまとめ直せます。";
+    case "truncated":
+      return "内容が長すぎて、まとめきれませんでした。原文はそのまま保存してあります。";
+    case "refused":
+      return "この内容は日記にまとめられませんでした。原文はそのまま保存してあります。";
     case "unknown":
       return "日記にまとめられませんでした。あとでまとめ直せます。";
   }
+}
+
+/** API が返した説明など、原因を調べる手がかり（設定の誤りに関係する種類だけ） */
+export function composeErrorDetail(error: ComposeError): string | undefined {
+  const kinds: ComposeErrorKind[] = ["auth", "bad-request", "unknown"];
+  return kinds.includes(error.kind) && error.message !== error.kind ? error.message : undefined;
 }

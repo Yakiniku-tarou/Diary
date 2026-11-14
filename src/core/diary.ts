@@ -60,7 +60,14 @@ function clock(deps: DiaryDeps) {
  */
 export async function addVoiceInput(
   deps: DiaryDeps,
-  input: { day: DiaryDay; transcript: string; style: DiaryStyle; compose: boolean },
+  input: {
+    day: DiaryDay;
+    transcript: string;
+    style: DiaryStyle;
+    compose: boolean;
+    /** 原文を保存し終えた時点で呼ばれる（下書きを消してよい合図）。まとめの完了より前 */
+    onTranscriptSaved?: (entry: DiaryEntry) => void | Promise<void>;
+  },
 ): Promise<ComposeOutcome> {
   const { nowIso, newId } = clock(deps);
   const transcript = input.transcript.trim();
@@ -93,6 +100,7 @@ export async function addVoiceInput(
         updatedAt: savedAt,
       };
   await deps.repo.putEntry(saved);
+  await input.onTranscriptSaved?.(saved);
 
   if (!input.compose) return { status: "saved", entry: saved };
 

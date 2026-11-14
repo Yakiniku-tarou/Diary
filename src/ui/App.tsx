@@ -1,4 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { DiaryComposer, DiaryRepository } from "../core/ports";
+import { ClaudeDiaryComposer } from "../services/claudeComposer";
+import { IndexedDbDiaryRepository } from "../services/indexedDbRepository";
+import { SettingsScreen } from "./SettingsScreen";
+import { TodayScreen } from "./TodayScreen";
+
+export interface AppServices {
+  repo: DiaryRepository;
+  composer: DiaryComposer;
+}
 
 type Tab = "today" | "review" | "settings";
 
@@ -8,24 +18,62 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "settings", label: "設定" },
 ];
 
-// ホーム画面のアイコンから起動しているか（フェーズ1の動作確認用に表示する）
-function isStandalone(): boolean {
-  const nav = navigator as Navigator & { standalone?: boolean };
-  return nav.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+type Startup = { status: "loading" } | { status: "ready"; services: AppServices } | { status: "error" };
+
+function useServices(): Startup {
+  const [startup, setStartup] = useState<Startup>({ status: "loading" });
+
+  useEffect(() => {
+    let cancelled = false;
+    const repo = new IndexedDbDiaryRepository();
+    repo.ready().then(
+      () => {
+        if (cancelled) return;
+        const composer = new ClaudeDiaryComposer({ getConfig: () => repo.getSettings() });
+        setStartup({ status: "ready", services: { repo, composer } });
+      },
+      () => {
+        if (!cancelled) setStartup({ status: "error" });
+      },
+    );
+    // データが自動で消されにくくなるよう頼む（断られても動作は変わらない）
+    void navigator.storage?.persist?.().catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return startup;
 }
 
 export function App() {
+  const startup = useServices();
   const [tab, setTab] = useState<Tab>("today");
-  const current = TABS.find((t) => t.id === tab);
 
   return (
     <div className="app">
       <main className="content">
-        <h1 className="page-title">{current?.label}</h1>
-        <p className="placeholder">準備中です。</p>
-        <p className="placeholder small">
-          起動方法：{isStandalone() ? "ホーム画面のアイコン" : "ブラウザ"}
-        </p>
+        {startup.status === "loading" && <p className="muted">読み込み中…</p>}
+        {startup.status === "error" && (
+          <div className="notice error" role="alert">
+            <p>保存領域を開けませんでした。</p>
+            <p className="small">
+              プライベートブラウズでは使えません。通常のモードで、ホーム画面のアイコンから開いてください。
+            </p>
+          </div>
+        )}
+        {startup.status === "ready" && (
+          <>
+            {tab === "today" && <TodayScreen services={startup.services} />}
+            {tab === "review" && (
+              <>
+                <h1 className="page-title">ふりかえり</h1>
+                <p className="muted">準備中です。</p>
+              </>
+            )}
+            {tab === "settings" && <SettingsScreen services={startup.services} />}
+          </>
+        )}
       </main>
       <nav className="tabbar" aria-label="メイン">
         {TABS.map((t) => (

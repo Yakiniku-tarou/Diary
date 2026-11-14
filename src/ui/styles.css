@@ -4,7 +4,13 @@
   --text: #2b2620;
   --muted: #7a6f63;
   --accent: #8a5a3b;
+  --on-accent: #fffdf9;
   --border: #e4dacb;
+  --error: #a8322a;
+  --error-bg: #fbeae6;
+  --ok: #2f6b3c;
+  --ok-bg: #e8f3e6;
+  --info-bg: #f1e9dc;
   --tabbar-height: 56px;
   color-scheme: light dark;
 }
@@ -16,7 +22,13 @@
     --text: #ece5da;
     --muted: #a39887;
     --accent: #d39a72;
+    --on-accent: #1c1a17;
     --border: #3a352e;
+    --error: #f0a59c;
+    --error-bg: #3b2320;
+    --ok: #9fd0a8;
+    --ok-bg: #203024;
+    --info-bg: #2e2a24;
   }
 }
 
@@ -53,22 +65,218 @@ body {
 
 .content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   padding: calc(16px + env(safe-area-inset-top)) 20px
     calc(var(--tabbar-height) + 24px + env(safe-area-inset-bottom));
 }
 
 .page-title {
-  font-size: 1.4rem;
-  margin: 0 0 12px;
+  font-size: 1.3rem;
+  margin: 0;
 }
 
-.placeholder {
+.muted {
   color: var(--muted);
+  margin: 0;
+}
+
+.small {
+  font-size: 0.85rem;
+}
+
+/* 日記の表示。読むものなので文字は大きめ・行間は広め */
+.entry-title {
+  font-size: 1.2rem;
   margin: 0 0 8px;
 }
 
-.placeholder.small {
+.entry-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 1.05rem;
+  line-height: 2;
+}
+
+/* 入力欄。画面の大部分を占める大きさ */
+.composer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.voice-input {
+  flex: 1;
+  min-height: 40vh;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.8;
+  resize: none;
+}
+
+.voice-input:focus-visible,
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ボタン */
+.button {
+  min-height: 48px;
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.button.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 1.05rem;
+  min-height: 54px;
+}
+
+.button.secondary {
+  background: var(--surface);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.button.text {
+  background: none;
+  color: var(--muted);
+  font-weight: 400;
+  min-height: 44px;
+  text-decoration: underline;
+}
+
+.button.wide {
+  width: 100%;
+}
+
+/* お知らせ */
+.notice {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--info-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.notice p {
+  margin: 0;
+}
+
+.notice.error {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.notice.ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.notice .small {
+  overflow-wrap: anywhere;
+}
+
+.status {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 3s;
+  }
+}
+
+/* 設定 */
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.settings-group h2 {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.field-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.field-help {
   font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+}
+
+.field .button.text {
+  align-self: flex-start;
 }
 
 /* 下部タブ。ホームバーを避ける */

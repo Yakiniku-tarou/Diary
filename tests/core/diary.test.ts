@@ -77,6 +77,27 @@ describe("addVoiceInput：その日初めての入力", () => {
     expect(savedWhenCalled?.isComposed).toBe(false);
   });
 
+  it("原文を保存した時点（API を呼ぶ前）で onTranscriptSaved が呼ばれる。失敗しても呼ばれる", async () => {
+    const order: string[] = [];
+    const { deps } = setup();
+    deps.composer = {
+      compose: async () => {
+        order.push("api");
+        throw new TypeError("offline");
+      },
+    };
+    await addVoiceInput(deps, {
+      day: DAY,
+      transcript: "話した内容",
+      style: "plain",
+      compose: true,
+      onTranscriptSaved: (entry) => {
+        order.push(`saved:${entry.segments.length}`);
+      },
+    });
+    expect(order).toEqual(["saved:1", "api"]);
+  });
+
   it("「まとめずにそのまま保存」：API を呼ばず、原文を本文・日付をタイトルにする", async () => {
     const { repo, composer, deps } = setup();
     const r = await addVoiceInput(deps, { day: DAY, transcript: "話した内容", style: "plain", compose: false });
