@@ -1,0 +1,109 @@
+:root {
+  --bg: #f7f3ec;
+  --surface: #fffdf9;
+  --text: #2b2620;
+  --muted: #7a6f63;
+  --accent: #8a5a3b;
+  --border: #e4dacb;
+  --tabbar-height: 56px;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1a17;
+    --surface: #26231f;
+    --text: #ece5da;
+    --muted: #a39887;
+    --accent: #d39a72;
+    --border: #3a352e;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic UI", "Meiryo", sans-serif;
+  font-size: 17px;
+  line-height: 1.8;
+  -webkit-text-size-adjust: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+/* PC では中央に幅 480px で表示 */
+.app {
+  max-width: 480px;
+  min-height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.content {
+  flex: 1;
+  padding: calc(16px + env(safe-area-inset-top)) 20px
+    calc(var(--tabbar-height) + 24px + env(safe-area-inset-bottom));
+}
+
+.page-title {
+  font-size: 1.4rem;
+  margin: 0 0 12px;
+}
+
+.placeholder {
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.placeholder.small {
+  font-size: 0.85rem;
+}
+
+/* 下部タブ。ホームバーを避ける */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab {
+  flex: 1;
+  height: var(--tabbar-height);
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.tab.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* iPhone で入力時に拡大されないよう 16px 以上 */
+input,
+textarea,
+select {
+  font-size: max(16px, 1rem);
+}
