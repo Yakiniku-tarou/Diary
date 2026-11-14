@@ -11,5 +11,7 @@ export default defineConfig({
   },
   test: {
     include: ["tests/**/*.test.ts"],
+    // 時刻の表示（HH:MM）を確かめるため、テストは日本時間で動かす
+    env: { TZ: "Asia/Tokyo" },
   },
 });
