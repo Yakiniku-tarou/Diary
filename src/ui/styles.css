@@ -87,16 +87,159 @@ body {
 }
 
 /* 日記の表示。読むものなので文字は大きめ・行間は広め */
-.entry-title {
-  font-size: 1.2rem;
-  margin: 0 0 8px;
+/* タップしてそのまま編集できる。枠は出さず、文章として読める見た目にする */
+.entry {
+  display: flex;
+  flex-direction: column;
 }
 
-.entry-body {
+.entry-title-input,
+.entry-body-input {
+  width: 100%;
+  margin: 0;
+  padding: 4px 6px;
+  margin-inline: -6px;
+  width: calc(100% + 12px);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font-family: inherit;
+  /* 無効のとき（まとめている間）も、iPhone で薄くならないようにする */
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
+}
+
+.entry-title-input {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.entry-body-input {
+  font-size: max(16px, 1.05rem);
+  line-height: 2;
+  resize: none;
+  overflow: hidden;
+  display: block;
+}
+
+.entry-title-input::placeholder {
+  color: var(--muted);
+  font-weight: 400;
+  -webkit-text-fill-color: var(--muted);
+}
+
+.entry-title-input:focus-visible,
+.entry-body-input:focus-visible {
+  outline: none;
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.save-status {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* 日記の下の操作 */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 8px;
+}
+
+.actions-row .button.text {
+  padding-inline: 8px;
+}
+
+.button.danger {
+  background: var(--error);
+  color: var(--bg);
+}
+
+.button.text.danger-text {
+  color: var(--error);
+}
+
+/* 話した原文（読み取り専用） */
+.segments {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.segments h2 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.segments ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.segments time {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.segments p {
+  margin: 0;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  font-size: 1.05rem;
-  line-height: 2;
+}
+
+/* 確認ダイアログ */
+.dialog {
+  width: min(92vw, 420px);
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.dialog-message {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.dialog-detail {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.dialog-actions .button {
+  flex: 1;
+  min-height: 48px;
+  font-size: 1rem;
 }
 
 /* 入力欄。画面の大部分を占める大きさ */
