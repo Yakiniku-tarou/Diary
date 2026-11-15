@@ -648,8 +648,86 @@ body {
   background: none;
   color: var(--muted);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   cursor: pointer;
+}
+
+.tab-icon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 録音ボタン（実験的） */
+.button.text.record {
+  min-height: 40px;
+  font-size: 0.9rem;
+}
+
+.button.recording {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.recording-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--error);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* 指で押したときの反応 */
+button,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.button:not(:disabled):active,
+.tab:active,
+.segment:active,
+.month-nav:not(:disabled):active,
+.calendar-day:not(:disabled):active,
+.entry-list-item:active {
+  opacity: 0.6;
+}
+
+.button,
+.tab,
+.segment,
+.calendar-day,
+.month-nav {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recording-dot {
+    animation: none;
+  }
 }
 
 .tab.active {

@@ -4,6 +4,7 @@ import { addVoiceInput, regenerateEntry, undoLastCompose, type ComposeOutcome } 
 import { createDraftSaver } from "../core/draftSaver";
 import { composeErrorDetail, composeErrorMessage } from "../core/errors";
 import type { DiaryDay, DiaryEntry } from "../core/types";
+import { findSpeechRecognition, startSpeechRecognition, type SpeechSession } from "../services/speechRecognizer";
 import type { AppServices } from "./App";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { EntryEditor } from "./EntryEditor";
@@ -39,6 +40,10 @@ export function DayScreen({ services, day, restoreDraft }: Props) {
   const [notice, setNotice] = useState<Notice>();
   const busyRef = useRef(false);
   const flushEdits = useRef<() => Promise<void>>(() => Promise.resolve());
+  // 録音ボタン（実験的）。ブラウザの音声認識が無い環境では出さない
+  const Recognition = useMemo(() => findSpeechRecognition(), []);
+  const [recording, setRecording] = useState(false);
+  const speech = useRef<SpeechSession | undefined>(undefined);
 
   const draftSaver = useMemo(
     () =>
@@ -78,6 +83,28 @@ export function DayScreen({ services, day, restoreDraft }: Props) {
   const onChangeText = (value: string) => {
     setText(value);
     draftSaver.save(value, day);
+  };
+
+  // 画面を離れるときは録音を打ち切る（聞き取った分は下書きに入っている）
+  useEffect(() => () => speech.current?.cancel(), []);
+
+  const startRecording = () => {
+    if (!Recognition || recording) return;
+    const base = text;
+    setNotice(undefined);
+    setRecording(true);
+    speech.current = startSpeechRecognition(Recognition, {
+      // 聞き取った内容は、ふつうの入力と同じように下書きへ自動保存する
+      onText: (spoken) => onChangeText(base + spoken),
+      onEnd: (error) => {
+        setRecording(false);
+        if (error === "not-allowed") {
+          setNotice({ kind: "error", text: "マイクを使えませんでした。キーボードのマイクで入力してください。" });
+        } else if (error === "failed") {
+          setNotice({ kind: "error", text: "録音を続けられませんでした。キーボードのマイクで入力してください。" });
+        }
+      },
+    });
   };
 
   const showOutcome = (outcome: ComposeOutcome) => {
@@ -181,7 +208,7 @@ export function DayScreen({ services, day, restoreDraft }: Props) {
   }
 
   const showInput = !entry || inputOpen;
-  const canSubmit = text.trim() !== "" && !busy;
+  const canSubmit = text.trim() !== "" && !busy && !recording;
   const hasSegments = (entry?.segments.length ?? 0) > 0;
 
   return (
@@ -232,14 +259,27 @@ export function DayScreen({ services, day, restoreDraft }: Props) {
             placeholder="キーボードのマイクを押して話してください"
             aria-label={entry ? "追記する内容" : "日記の内容"}
             disabled={busy !== undefined}
+            // 録音中は聞き取った内容で書き換わるので、手では打てないようにする
+            readOnly={recording}
           />
+          {Recognition &&
+            (recording ? (
+              <button type="button" className="button secondary recording" onClick={() => speech.current?.stop()}>
+                <span className="recording-dot" aria-hidden="true" />
+                聞き取り中… タップで止める
+              </button>
+            ) : (
+              <button type="button" className="button text record" disabled={busy !== undefined} onClick={startRecording}>
+                録音ボタンで話す（実験的）
+              </button>
+            ))}
           <button type="button" className="button primary" disabled={!canSubmit} onClick={() => submit(true)}>
             {entry ? "日記に追記する" : "日記にする"}
           </button>
           <button type="button" className="button text" disabled={!canSubmit} onClick={() => submit(false)}>
             まとめずにそのまま保存
           </button>
-          {entry && text === "" && !busy && (
+          {entry && text === "" && !busy && !recording && (
             <button type="button" className="button text" onClick={() => setInputOpen(false)}>
               閉じる
             </button>

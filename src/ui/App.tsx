@@ -19,6 +19,16 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "settings", label: "設定" },
 ];
 
+// タブのアイコン（線画。外部の画像やフォントは使わない）
+const TAB_ICONS: Record<Tab, string> = {
+  // ペン
+  today: "M4 20l1-4.5L16.5 4a1.8 1.8 0 0 1 2.5 0l1 1a1.8 1.8 0 0 1 0 2.5L8.5 19 4 20z M14.5 6l3.5 3.5",
+  // カレンダー
+  review: "M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z M4 10.5h16 M8 3.5v4 M16 3.5v4",
+  // つまみ（スライダー）
+  settings: "M4 7h9 M17 7h3 M15 5v4 M4 17h3 M11 17h9 M9 15v4",
+};
+
 // iPhone の Safari で直接開いているか（ホーム画面のアイコンから開くと true になる。iPhone 以外では undefined）
 const inSafariTab = (navigator as Navigator & { standalone?: boolean }).standalone === false;
 
@@ -92,8 +102,14 @@ export function App() {
             type="button"
             className={t.id === tab ? "tab active" : "tab"}
             aria-current={t.id === tab ? "page" : undefined}
-            onClick={() => setTab(t.id)}
+            onClick={() => {
+              setTab(t.id);
+              window.scrollTo(0, 0);
+            }}
           >
+            <svg className="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d={TAB_ICONS[t.id]} />
+            </svg>
             {t.label}
           </button>
         ))}
