@@ -422,6 +422,211 @@ body {
   align-self: flex-start;
 }
 
+/* ふりかえり */
+.search-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.segmented {
+  display: flex;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--info-bg);
+}
+
+.segment {
+  flex: 1;
+  min-height: 40px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.segment.active {
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.month-nav {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.month-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.calendar-day {
+  position: relative;
+  aspect-ratio: 1;
+  min-height: 44px;
+  padding: 0 0 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.calendar-day:disabled {
+  color: var(--muted);
+  opacity: 0.45;
+  cursor: default;
+}
+
+.calendar-day.has-entry {
+  background: var(--surface);
+  border-color: var(--border);
+  font-weight: 600;
+}
+
+.calendar-day.today {
+  border-color: var(--accent);
+}
+
+.calendar-dot {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+}
+
+.calendar-day.has-entry .calendar-dot {
+  background: var(--accent);
+}
+
+.entry-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.entry-list-item {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.entry-list-day {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.entry-list-title {
+  font-weight: 700;
+}
+
+.entry-list-body {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.button.text.back {
+  align-self: flex-start;
+  padding-inline: 0;
+  margin-block: -8px;
+  text-decoration: none;
+  color: var(--accent);
+}
+
+/* 書き出しの催促（控えめに） */
+.reminder {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.link {
+  padding: 0;
+  margin-left: 0.5em;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* 下部タブ。ホームバーを避ける */
 .tabbar {
   position: fixed;

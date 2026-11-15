@@ -3,6 +3,7 @@ import { ComposeError, composeErrorDetail, composeErrorMessage, toComposeError }
 import { DEFAULT_MODEL, type DiaryStyle, type Settings } from "../core/types";
 import { testClaudeConnection } from "../services/claudeComposer";
 import type { AppServices } from "./App";
+import { BackupSection } from "./BackupSection";
 
 type TestResult =
   | { status: "testing" }
@@ -156,6 +157,12 @@ export function SettingsScreen({ services }: { services: AppServices }) {
           <span className="field-help">この時刻より前に書いた内容は、前の日の日記になります。</span>
         </label>
       </section>
+
+      <BackupSection
+        repo={repo}
+        lastExportedAt={settings.lastExportedAt}
+        onExported={(at) => update({ lastExportedAt: at })}
+      />
     </>
   );
 }

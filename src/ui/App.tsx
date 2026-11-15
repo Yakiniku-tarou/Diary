@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { DiaryComposer, DiaryRepository } from "../core/ports";
 import { ClaudeDiaryComposer } from "../services/claudeComposer";
 import { IndexedDbDiaryRepository } from "../services/indexedDbRepository";
+import { ReviewScreen } from "./ReviewScreen";
 import { SettingsScreen } from "./SettingsScreen";
 import { TodayScreen } from "./TodayScreen";
 
@@ -18,7 +19,10 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "settings", label: "設定" },
 ];
 
-type Startup = { status: "loading" } | { status: "ready"; services: AppServices } | { status: "error" };
+// iPhone の Safari で直接開いているか（ホーム画面のアイコンから開くと true になる。iPhone 以外では undefined）
+const inSafariTab = (navigator as Navigator & { standalone?: boolean }).standalone === false;
+
+type Startup ={ status: "loading" } | { status: "ready"; services: AppServices } | { status: "error" };
 
 function useServices(): Startup {
   const [startup, setStartup] = useState<Startup>({ status: "loading" });
@@ -64,13 +68,19 @@ export function App() {
         )}
         {startup.status === "ready" && (
           <>
-            {tab === "today" && <TodayScreen services={startup.services} />}
-            {tab === "review" && (
-              <>
-                <h1 className="page-title">ふりかえり</h1>
-                <p className="muted">準備中です。</p>
-              </>
+            {inSafariTab && (
+              <div className="notice info" role="note">
+                <p>ホーム画面に追加して使ってください。</p>
+                <p className="small">
+                  Safari で開いたときと、ホーム画面のアイコンから開いたときでは、日記の保存場所が別になります。共有ボタン
+                  →「ホーム画面に追加」のあと、アイコンから開いてください。
+                </p>
+              </div>
             )}
+            {tab === "today" && (
+              <TodayScreen services={startup.services} onOpenSettings={() => setTab("settings")} />
+            )}
+            {tab === "review" && <ReviewScreen services={startup.services} />}
             {tab === "settings" && <SettingsScreen services={startup.services} />}
           </>
         )}
