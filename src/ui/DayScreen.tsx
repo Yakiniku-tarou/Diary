@@ -264,13 +264,17 @@ export function DayScreen({ services, day, restoreDraft }: Props) {
           />
           {Recognition &&
             (recording ? (
-              <button type="button" className="button secondary recording" onClick={() => speech.current?.stop()}>
+              <button type="button" className="mic-button recording" onClick={() => speech.current?.stop()}>
                 <span className="recording-dot" aria-hidden="true" />
                 聞き取り中… タップで止める
               </button>
             ) : (
-              <button type="button" className="button text record" disabled={busy !== undefined} onClick={startRecording}>
-                録音ボタンで話す（実験的）
+              <button type="button" className="mic-button" disabled={busy !== undefined} onClick={startRecording}>
+                <svg className="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z M6 11a6 6 0 0 0 12 0 M12 17v4 M9 21h6" />
+                </svg>
+                タップして話す
+                <span className="badge">実験的</span>
               </button>
             ))}
           <button type="button" className="button primary" disabled={!canSubmit} onClick={() => submit(true)}>
