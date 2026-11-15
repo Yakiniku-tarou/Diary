@@ -1,49 +1,54 @@
-/* 色と形の決まり。ポップでやわらかい見た目（丸い文字、ピンク＋ミント＋きいろ） */
+/* 色と形の決まり。パステルでやわらかい見た目（丸い文字、薄紫＋水色） */
 :root {
-  --bg: #fff5ee;
-  --dot: #ffe4d9;
+  --bg: #f3f4ff;
+  --dot: #e3e6fb;
   --surface: #ffffff;
-  --text: #4a3b3f;
-  --muted: #94797f;
-  --accent: #e9557d;
-  --accent-deep: #c23a62;
-  --accent-soft: #ffe3ea;
-  --on-accent: #ffffff;
-  --mint: #c9f2e4;
-  --mint-deep: #8fd8c0;
-  --mint-text: #17695a;
-  --yellow: #ffe58f;
-  --border: #f8dcd5;
-  --error: #c2332b;
-  --error-bg: #ffe6e2;
-  --ok: #1c7350;
-  --ok-bg: #dcf5e8;
-  --info-bg: #fff1c7;
+  --text: #3d3f5c;
+  --muted: #74769a;
+  /* 文字・線に使う紫 */
+  --accent: #6c62c8;
+  /* ボタンの面に使うパステルの薄紫と、その上の文字・影 */
+  --accent-fill: #c3bdf8;
+  --on-accent: #2e2a6b;
+  --accent-deep: #968ee2;
+  --accent-soft: #e9e6ff;
+  /* 差し色の水色 */
+  --sub: #cfeaff;
+  --sub-deep: #9ccdf2;
+  --sub-text: #1f5f8f;
+  --marker: #c4e4ff;
+  --border: #dfe0f7;
+  --error: #c2334a;
+  --error-bg: #ffe6ec;
+  --ok: #1d6f6a;
+  --ok-bg: #d9f3ee;
+  --info-bg: #e4f0ff;
   --tabbar-height: 60px;
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #241c22;
-    --dot: #2f252c;
-    --surface: #31272e;
-    --text: #f6e9ec;
-    --muted: #bba5ad;
-    --accent: #ff8fa8;
-    --accent-deep: #c9607a;
-    --accent-soft: #4b2d39;
-    --on-accent: #2a1820;
-    --mint: #24493f;
-    --mint-deep: #17332c;
-    --mint-text: #a6e8d4;
-    --yellow: #6b5a1e;
-    --border: #47373f;
-    --error: #ffaaa0;
-    --error-bg: #472622;
-    --ok: #a3dfb9;
-    --ok-bg: #20382b;
-    --info-bg: #3f3722;
+    --bg: #1d1e2e;
+    --dot: #262840;
+    --surface: #292b40;
+    --text: #ecebfa;
+    --muted: #a9aac8;
+    --accent: #b9b2ff;
+    --accent-fill: #a79ff0;
+    --on-accent: #1e1b45;
+    --accent-deep: #6f67b8;
+    --accent-soft: #383660;
+    --sub: #23405a;
+    --sub-deep: #18304a;
+    --sub-text: #a9d8fb;
+    --marker: #34507a;
+    --border: #3c3e5c;
+    --error: #ffa9b5;
+    --error-bg: #45232b;
+    --ok: #9fe0d6;
+    --ok-bg: #1d3a37;
+    --info-bg: #26344d;
   }
 }
 
@@ -97,7 +102,7 @@ body {
   padding: 0 6px;
   font-size: 1.3rem;
   line-height: 1.5;
-  background: linear-gradient(transparent 58%, var(--yellow) 58%);
+  background: linear-gradient(transparent 58%, var(--marker) 58%);
   border-radius: 4px;
 }
 
@@ -216,8 +221,8 @@ body {
 .segments time {
   padding: 1px 10px;
   border-radius: 999px;
-  background: var(--mint);
-  color: var(--mint-text);
+  background: var(--sub);
+  color: var(--sub-text);
   font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
 }
@@ -239,7 +244,7 @@ body {
 }
 
 .dialog::backdrop {
-  background: rgb(60 30 40 / 0.45);
+  background: rgb(40 40 80 / 0.45);
 }
 
 .dialog-message {
@@ -316,7 +321,7 @@ body {
 }
 
 .button.primary {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
   font-size: 1.05rem;
   min-height: 54px;
@@ -327,9 +332,9 @@ body {
 .button.secondary {
   background: var(--surface);
   color: var(--accent);
-  border-color: var(--accent);
+  border-color: var(--accent-deep);
   margin-bottom: 3px;
-  box-shadow: 0 3px 0 var(--accent);
+  box-shadow: 0 3px 0 var(--accent-deep);
 }
 
 .button.danger {
@@ -371,11 +376,11 @@ body {
   min-height: 58px;
   margin-bottom: 4px;
   padding: 8px 20px;
-  border: 2px solid var(--mint-deep);
+  border: 2px solid var(--sub-deep);
   border-radius: 999px;
-  background: var(--mint);
-  color: var(--mint-text);
-  box-shadow: 0 4px 0 var(--mint-deep);
+  background: var(--sub);
+  color: var(--sub-text);
+  box-shadow: 0 4px 0 var(--sub-deep);
   font: inherit;
   font-size: 1.05rem;
   font-weight: 700;
@@ -414,10 +419,10 @@ body {
 }
 
 .mic-button.recording {
-  border-color: var(--accent);
+  border-color: var(--accent-deep);
   background: var(--accent-soft);
   color: var(--accent);
-  box-shadow: 0 4px 0 var(--accent);
+  box-shadow: 0 4px 0 var(--accent-deep);
 }
 
 .recording-dot {
@@ -708,8 +713,8 @@ body {
 .entry-list-day {
   padding: 0 10px;
   border-radius: 999px;
-  background: var(--mint);
-  color: var(--mint-text);
+  background: var(--sub);
+  color: var(--sub-text);
   font-size: 0.8rem;
 }
 
