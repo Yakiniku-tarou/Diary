@@ -274,7 +274,6 @@ export function DayScreen({ services, day, restoreDraft }: Props) {
                   <path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z M6 11a6 6 0 0 0 12 0 M12 17v4 M9 21h6" />
                 </svg>
                 タップして話す
-                <span className="badge">実験的</span>
               </button>
             ))}
           <button type="button" className="button primary" disabled={!canSubmit} onClick={() => submit(true)}>
