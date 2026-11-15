@@ -8,7 +8,7 @@ import { ComposeError, toComposeError } from "./errors";
 import { parseComposerResponse } from "./parse";
 import type { DiaryComposer, DiaryRepository } from "./ports";
 import { buildAppendPrompt, buildNewPrompt } from "./prompt";
-import type { DiaryDay, DiaryEntry, DiaryStyle, VoiceSegment } from "./types";
+import type { DiaryDay, DiaryEntry, DiaryFormat, DiaryStyle, VoiceSegment } from "./types";
 
 export interface DiaryDeps {
   repo: DiaryRepository;
@@ -64,6 +64,8 @@ export async function addVoiceInput(
     day: DiaryDay;
     transcript: string;
     style: DiaryStyle;
+    /** まとめ方。省略時は文章 */
+    format?: DiaryFormat;
     compose: boolean;
     /** 原文を保存し終えた時点で呼ばれる（下書きを消してよい合図）。まとめの完了より前 */
     onTranscriptSaved?: (entry: DiaryEntry) => void | Promise<void>;
@@ -107,8 +109,8 @@ export async function addVoiceInput(
   // 2. まとめる。本文が空なら原文すべてから新規、あれば追記
   const isAppend = previousBody.trim() !== "";
   const prompt = isAppend
-    ? buildAppendPrompt({ day: input.day, style: input.style, currentBody: previousBody, segment })
-    : buildNewPrompt({ day: input.day, style: input.style, segments: saved.segments });
+    ? buildAppendPrompt({ day: input.day, style: input.style, format: input.format ?? "prose", currentBody: previousBody, segment })
+    : buildNewPrompt({ day: input.day, style: input.style, format: input.format ?? "prose", segments: saved.segments });
 
   const result = await runComposer(deps, prompt, input.day);
   if (result instanceof ComposeError) return { status: "failed", entry: saved, error: result };
@@ -134,14 +136,19 @@ export async function addVoiceInput(
 /** 「まとめ直す」：その日の全原文から作り直す。直前の本文は previousBody に退避 */
 export async function regenerateEntry(
   deps: DiaryDeps,
-  input: { day: DiaryDay; style: DiaryStyle },
+  input: { day: DiaryDay; style: DiaryStyle; format?: DiaryFormat },
 ): Promise<ComposeOutcome> {
   const { nowIso } = clock(deps);
   const entry = await deps.repo.getEntry(input.day);
   if (!entry) throw new Error("日記が見つかりません");
   if (entry.segments.length === 0) throw new Error("話した原文がないため、まとめ直せません");
 
-  const prompt = buildNewPrompt({ day: input.day, style: input.style, segments: entry.segments });
+  const prompt = buildNewPrompt({
+    day: input.day,
+    style: input.style,
+    format: input.format ?? "prose",
+    segments: entry.segments,
+  });
   const result = await runComposer(deps, prompt, input.day);
   if (result instanceof ComposeError) return { status: "failed", entry, error: result };
 

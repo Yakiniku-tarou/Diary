@@ -19,6 +19,40 @@ describe("buildSystemPrompt", () => {
   });
 });
 
+describe("まとめ方（文章／箇条書き）", () => {
+  it("指定しなければ文章で、箇条書きを使わない指示になる", () => {
+    expect(buildSystemPrompt("plain")).toBe(buildSystemPrompt("plain", "prose"));
+    expect(buildSystemPrompt("plain")).toContain("- 箇条書きや見出しは使わず、段落だけの文章にする。");
+    expect(buildSystemPrompt("plain")).toContain("段落を分けて読みやすく並べ替える。");
+  });
+
+  it("箇条書きでは「・」で始まる項目にする指示になり、段落の指示は入らない", () => {
+    const p = buildSystemPrompt("polite", "bullets");
+    expect(p).toContain("- 本文は箇条書きにする。各項目は行頭に「・」を付けて1行ずつ書き");
+    expect(p).not.toContain("段落だけの文章にする");
+    expect(p).not.toContain("段落を分けて");
+    // ほかのルールと出力形式は同じ
+    expect(p).toContain("文体は敬体で統一する。");
+    expect(p).toContain("締めの感想を創作しない。");
+    expect(p.endsWith('出力は次のJSONだけを返す：\n{"title": "...", "body": "..."}')).toBe(true);
+  });
+
+  it("新規・追記のどちらにも反映される", () => {
+    const segment = seg("a", "2026-11-15T00:05:00.000Z", "朝ごはんを食べた");
+    const created = buildNewPrompt({ day: "2026-11-15", style: "plain", format: "bullets", segments: [segment] });
+    expect(created.system).toBe(buildSystemPrompt("plain", "bullets"));
+    const appended = buildAppendPrompt({
+      day: "2026-11-15",
+      style: "plain",
+      format: "bullets",
+      currentBody: "・朝は雨だった",
+      segment,
+    });
+    expect(appended.system.startsWith(buildSystemPrompt("plain", "bullets"))).toBe(true);
+    expect(appended.system).toContain("現在の本文の内容と表現は変えずに");
+  });
+});
+
 describe("buildNewPrompt", () => {
   it("全原文を時刻つきで順に渡す（テストは日本時間）", () => {
     const p = buildNewPrompt({

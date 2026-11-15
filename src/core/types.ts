@@ -6,6 +6,9 @@ export type DiaryDay = string;
 /** 文体：常体／敬体 */
 export type DiaryStyle = "plain" | "polite";
 
+/** まとめ方：文章（段落）／箇条書き */
+export type DiaryFormat = "prose" | "bullets";
+
 export interface VoiceSegment {
   readonly id: string;
   /** ISO 8601 */
@@ -36,6 +39,7 @@ export interface Settings {
   apiKey: string;
   model: string;
   style: DiaryStyle;
+  format: DiaryFormat;
   dayBoundaryHour: number;
   lastExportedAt?: string;
 }
@@ -54,5 +58,6 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = {
   apiKey: "",
   model: DEFAULT_MODEL,
   style: "plain",
+  format: "prose",
   dayBoundaryHour: 4,
 };

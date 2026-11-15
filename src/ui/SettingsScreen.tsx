@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ComposeError, composeErrorDetail, composeErrorMessage, toComposeError } from "../core/errors";
-import { DEFAULT_MODEL, type DiaryStyle, type Settings } from "../core/types";
+import { DEFAULT_MODEL, type DiaryFormat, type DiaryStyle, type Settings } from "../core/types";
 import { testClaudeConnection } from "../services/claudeComposer";
 import type { AppServices } from "./App";
 import { BackupSection } from "./BackupSection";
@@ -133,6 +133,17 @@ export function SettingsScreen({ services }: { services: AppServices }) {
 
       <section className="settings-group">
         <h2>日記</h2>
+
+        <label className="field">
+          <span className="field-label">まとめ方</span>
+          <select value={settings.format} onChange={(e) => update({ format: e.target.value as DiaryFormat })}>
+            <option value="prose">文章（既定）</option>
+            <option value="bullets">箇条書き</option>
+          </select>
+          <span className="field-help">
+            次に「日記にする」「まとめ直す」を押したときから使われます。すでにある日記は変わりません。
+          </span>
+        </label>
 
         <label className="field">
           <span className="field-label">文体</span>

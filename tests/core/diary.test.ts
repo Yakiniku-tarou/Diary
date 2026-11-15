@@ -210,6 +210,16 @@ describe("addVoiceInput：2回目以降（追記）", () => {
     await addVoiceInput(deps, { day: DAY, transcript: "話した", style: "polite", compose: true });
     expect(composer.calls[0]?.system).toContain("文体は敬体で統一する。");
   });
+
+  it("まとめ方の設定がプロンプトに反映される（省略時は文章）", async () => {
+    const bullets = setup([json("t", "・b")]);
+    await addVoiceInput(bullets.deps, { day: DAY, transcript: "話した", style: "plain", format: "bullets", compose: true });
+    expect(bullets.composer.calls[0]?.system).toContain("本文は箇条書きにする。");
+
+    const prose = setup([json("t", "b")]);
+    await addVoiceInput(prose.deps, { day: DAY, transcript: "話した", style: "plain", compose: true });
+    expect(prose.composer.calls[0]?.system).toContain("段落だけの文章にする。");
+  });
 });
 
 describe("addVoiceInput：まとめている間の変更", () => {
@@ -263,6 +273,12 @@ describe("regenerateEntry（まとめ直す）", () => {
     expect(composer.calls[0]?.system).not.toContain("追記のルール");
     expect(composer.calls[0]?.user).toContain("朝の話");
     expect(composer.calls[0]?.user).toContain("夜の話");
+  });
+
+  it("まとめ方の設定がプロンプトに反映される", async () => {
+    const { composer, deps } = setup([json("新タイトル", "・朝の話\n・夜の話")], [twoSegments]);
+    await regenerateEntry(deps, { day: DAY, style: "plain", format: "bullets" });
+    expect(composer.calls[0]?.system).toContain("本文は箇条書きにする。");
   });
 
   it("失敗したら日記は何も変えない", async () => {

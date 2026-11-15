@@ -144,6 +144,7 @@ export function DayScreen({ services, day, restoreDraft }: Props) {
           day,
           transcript: text,
           style: settings.style,
+          format: settings.format,
           compose,
           // 原文を保存できた時点で、入力欄と下書きを空にする（まとめの完了は待たない）
           onTranscriptSaved: (saved) => {
@@ -165,7 +166,7 @@ export function DayScreen({ services, day, restoreDraft }: Props) {
       "composing",
       async () => {
         const settings = await repo.getSettings();
-        showOutcome(await regenerateEntry(services, { day, style: settings.style }));
+        showOutcome(await regenerateEntry(services, { day, style: settings.style, format: settings.format }));
       },
       "まとめ直せませんでした。",
     );
